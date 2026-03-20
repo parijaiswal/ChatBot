@@ -1,0 +1,38 @@
+<link rel="stylesheet" type="text/css" href="static/style.css">
+<div class="chat-container">
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <div id="chat-box"></div>
+</div>
+<script>
+    async function sendMessage(){
+        const userinput = document.getElementById('user-input').value.trim();
+
+        if(userinput === '') {
+            alert('Please enter a message.');
+            return;
+        }
+
+        const response = await fetch('http://127.0.0.1:5000/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({message: userinput})
+        });
+
+        const data = await response.json();
+
+        const chatbox = document.getElementById('chat-box');
+        chatbox.innerHTML += `<div class="user-message"><span>You:</span> ${userinput}</div>`;
+
+        chatbox.innerHTML += `<div class="bot-message"><span>Bot:</span> ${data.reply}</div>`;
+
+        document.getElementById('user-input').value = '';
+
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }
+</script>
+
